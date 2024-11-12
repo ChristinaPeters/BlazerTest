@@ -116,6 +116,9 @@
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //Limit the number of results to 10
             request.Headers.Add("Prefer", "odata.maxpagesize=10");
+            request.Headers.Add("Access-Control-Allow-Origin", "*");
+            request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
+
 
             //Send the request
             var response = await client.SendAsync(request);
