@@ -62,6 +62,9 @@
                     }
                 </tbody>
             </table>
+            <button @onclick="TriggerLogicAppOnButtonClick">Call Logic App</button>
+
+ 
         }
         else
         {
@@ -145,6 +148,33 @@
     }
 
 
+    private async Task TriggerLogicAppOnButtonClick()
+    {
+        try
+        {
+            HttpClient client = new HttpClient();
+            // Replace with your Logic App's HTTP trigger URL
+            var logicAppUrl = "https://prod-199.westeurope.logic.azure.com:443/workflows/f81e9d66e7a74f6ebee37adfaa073eb0/triggers/test/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Ftest%2Frun&sv=1.0&sig=ZGs_UiiXUm8mtY1TiYH3ITPRN6VWXh7yXUumnoawbBg";
+
+            // Make the HTTP GET request (or POST, depending on your Logic App's configuration)
+            var response = await client.GetAsync(logicAppUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                message = "Logic App triggered successfully!";
+            }
+            else
+            {
+                message = $"Failed to trigger Logic App. Status code: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+    }
+
+
     // The result will be a JSON object with an array of entities set to the value property
     public class AccountCollection
     {
@@ -165,6 +195,7 @@
         public string address1_city { get; set; }
 
         public Contact primarycontactid { get; set; }
+
 
     }
 
