@@ -1,0 +1,30 @@
+﻿@page "/auth-callback"
+@inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+
+@code {
+    [Parameter]
+    public string Code { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the code from the query string
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        var code = query["code"];
+
+        if (!string.IsNullOrEmpty(code))
+        {
+            Console.WriteLine("Authorization Code: " + code);
+
+            // You can now use the authorization code to request an access token.
+        }
+        else
+        {
+            Console.WriteLine("Authorization code not found in query.");
+        }
+
+        // Navigate back to a main page or provide feedback
+        Navigation.NavigateTo("/", forceLoad: true);
+    }
+}

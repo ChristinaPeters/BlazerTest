@@ -170,30 +170,29 @@
 
     private async Task GetAUth()
     {
+        var client = new HttpClient();
 
         var tenantId = "823abcf0-d47f-4968-a240-f3d8bc9cb9df";
         var clientId = "cd688eb0-90d6-42c5-92e8-5091efdc2d14";
-        var redirectUri = "https://global.consent.azure-apim.net/redirect";
-
-        var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
-        HandleRedirect();
-
+        //var redirectUri = "https://global.consent.azure-apim.net/redirect";
+        var redirectUri = "https://localhost:7276/auth-callback";
         //var client = new HttpClient();
 
-        //var response = await client.GetAsync(authorizationUrl);
-        //var content = await response.Content.ReadAsStringAsync();
-        //var json = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(content);
-        //var accessToken = json.GetProperty("code").GetString();
-        //Console.WriteLine("codeeeeeeeeeeeeeeeeeeeeeeeee is");
+        var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
+
+        var response = await client.GetAsync(authorizationUrl);
+
+       // var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
+
         //await JS.InvokeVoidAsync("open", authorizationUrl, "_self");
-        //var content = await authorizationUrl.Content.ReadAsStringAsync();
-        HandleRedirect();
         Navigation.NavigateTo("/", forceLoad: true);
-      
+
     }
 
 
-
+    /// <summary>
+    /// Handle redirect and getting the auth code ?????
+    /// </summary>
     private void HandleRedirect()
     {
         // Capture the current URL
