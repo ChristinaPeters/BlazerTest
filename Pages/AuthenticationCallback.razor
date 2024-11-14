@@ -1,0 +1,64 @@
+﻿@page "/auth-callback"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Signing in...</h3>
+
+@code {
+    private string? authorizationCode; // Declare a global field for the authorization code
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Extract the authorization code from the query parameters
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out var code))
+        {
+            // Store the code in the global variable
+            authorizationCode = code;
+
+            // Use the authorization code to request tokens and store the result in a variable
+            await ExchangeAuthorizationCodeForToken(authorizationCode);
+            Console.WriteLine("Authorization code: " + authorizationCode);
+
+            // Redirect the user to the main page or dashboard
+            Navigation.NavigateTo("/fetchaccounts");
+        }
+        else
+        {
+            // Handle error or redirect if authorization code is not present
+            Console.WriteLine("Authorization code not found");
+        }
+    }
+
+    private async Task ExchangeAuthorizationCodeForToken(string code)
+    {
+        // Exchange the authorization code for an access token
+        var clientId = "your-client-id";
+        var clientSecret = "your-client-secret";
+        var tenantId = "your-tenant-id";
+        var redirectUri = "https://localhost:7276/auth-callback";
+
+        var tokenRequestData = new Dictionary<string, string>
+        {
+            { "client_id", clientId },
+            { "scope", "offline_access user.read mail.read" },
+            { "code", code },
+            { "redirect_uri", redirectUri },
+            { "grant_type", "authorization_code" },
+            { "client_secret", clientSecret }
+        };
+
+        var request = new HttpRequestMessage(HttpMethod.Post, $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token")
+            {
+                Content = new FormUrlEncodedContent(tokenRequestData)
+            };
+
+        var httpClient = new HttpClient();
+        var response = await httpClient.SendAsync(request);
+        var tokenResponse = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine("Token response: " + tokenResponse);
+
+        // Parse and store the token securely (consider using session storage or secure cookies)
+    }
+}
