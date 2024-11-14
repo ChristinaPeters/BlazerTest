@@ -29,8 +29,10 @@ builder.Services.AddHttpClient("DataverseClient", client =>
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+
     options.ProviderOptions.DefaultAccessTokenScopes
         .Add($"{resourceUrl}/user_impersonation");
+
     //options.ProviderOptions.DefaultAccessTokenScopes.Add("api://your-api-client-id/.default"); // Scope for API access
 
 });

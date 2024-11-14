@@ -4,9 +4,14 @@
 @using System.Net.Http.Json
 @using Microsoft.Extensions.Logging;
 @using System.Text.Json.Serialization;
+@using System.Text.Json
 @inject IAccessTokenProvider TokenProvider
 @inject IHttpClientFactory ClientFactory
 @inject ILogger<FetchAccounts> logger;
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.WebUtilities
+
 
 <AuthorizeView>
     @*Only show the list if the user is signed in and authorized*@
@@ -64,6 +69,11 @@
             </table>
             <button @onclick="TriggerLogicAppOnButtonClick">Call Logic App</button>
 
+            <button @onclick="GetAUth">Login with Azure AD</button>
+            <iframe id="authFrame" style="display:none;"></iframe>
+            
+
+
  
         }
         else
@@ -102,7 +112,7 @@
         if (tokenResult.TryGetToken(out var token))
         {
 
-             _token = token ;
+            _token = token ;
 
             //Creates an HttpClient based on the named definition found in Program.Main
             var client = ClientFactory.CreateClient("DataverseClient");
@@ -157,6 +167,58 @@
 
     }
 
+
+    private async Task GetAUth()
+    {
+
+        var tenantId = "823abcf0-d47f-4968-a240-f3d8bc9cb9df";
+        var clientId = "cd688eb0-90d6-42c5-92e8-5091efdc2d14";
+        var redirectUri = "https://global.consent.azure-apim.net/redirect";
+
+        var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
+        HandleRedirect();
+
+        //var client = new HttpClient();
+
+        //var response = await client.GetAsync(authorizationUrl);
+        //var content = await response.Content.ReadAsStringAsync();
+        //var json = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(content);
+        //var accessToken = json.GetProperty("code").GetString();
+        //Console.WriteLine("codeeeeeeeeeeeeeeeeeeeeeeeee is");
+        //await JS.InvokeVoidAsync("open", authorizationUrl, "_self");
+        //var content = await authorizationUrl.Content.ReadAsStringAsync();
+        HandleRedirect();
+        Navigation.NavigateTo("/", forceLoad: true);
+      
+    }
+
+
+
+    private void HandleRedirect()
+    {
+        // Capture the current URL
+        var currentUrl = Navigation.Uri;
+
+        // Check if the URL contains the 'code' parameter (the authorization code)
+        if (currentUrl.Contains("code"))
+        {
+            // Extract the 'code' parameter value from the URL
+            var uri = new Uri(currentUrl);
+            var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+            if (queryParams.TryGetValue("code", out var code))
+            {
+                // Now you have the authorization code, you can exchange it for an access token
+                var authorizationCode = code.ToString();
+                // Use the authorization code for further token exchange...
+                // Optionally, you can store the code or use it directly in your application.
+                Console.WriteLine("codeeeeeeeeeeeeeeeeeeeeeeeee is", authorizationCode);
+
+            }
+
+        }
+
+        // Optionally, navigate to the home page or take any other action
+    }
 
     private async Task TriggerLogicAppOnButtonClick()
     {
