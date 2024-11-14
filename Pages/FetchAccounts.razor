@@ -7,6 +7,8 @@
 @inject IAccessTokenProvider TokenProvider
 @inject IHttpClientFactory ClientFactory
 @inject ILogger<FetchAccounts> logger;
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <AuthorizeView>
     @*Only show the list if the user is signed in and authorized*@
@@ -63,8 +65,10 @@
                 </tbody>
             </table>
             <button @onclick="TriggerLogicAppOnButtonClick">Call Logic App</button>
+            <button @onclick="GetAUth">Login with Azure AD</button>
 
- 
+
+
         }
         else
         {
@@ -102,7 +106,7 @@
         if (tokenResult.TryGetToken(out var token))
         {
 
-             _token = token ;
+            _token = token;
 
             //Creates an HttpClient based on the named definition found in Program.Main
             var client = ClientFactory.CreateClient("DataverseClient");
@@ -112,8 +116,8 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}accounts?" +
-                    "$select=name,telephone1,address1_city&" +
-                    "$expand=primarycontactid($select=fullname,emailaddress1)")
+                        "$select=name,telephone1,address1_city&" +
+                        "$expand=primarycontactid($select=fullname,emailaddress1)")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -157,6 +161,19 @@
 
     }
 
+    private async Task GetAUth()
+    {
+        var client = new HttpClient();
+
+        var tenantId = "823abcf0-d47f-4968-a240-f3d8bc9cb9df";
+        var clientId = "cd688eb0-90d6-42c5-92e8-5091efdc2d14";
+        var redirectUri = "https://localhost:7276/auth-callback";
+
+        var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
+        //await JS.InvokeVoidAsync("open", authorizationUrl, "_self");
+        Navigation.NavigateTo(authorizationUrl, forceLoad: true);
+    }
+
 
     private async Task TriggerLogicAppOnButtonClick()
     {
@@ -167,19 +184,19 @@
 
             //if ((_token).Value == null)
             //{
-                // Optionally handle the error if the token is not available
-                //Console.WriteLine("Token not found. Please check authentication.");
-               // return;
-           //}
+            // Optionally handle the error if the token is not available
+            //Console.WriteLine("Token not found. Please check authentication.");
+            // return;
+            //}
             var logicAppUrl = "https://prod-199.westeurope.logic.azure.com:443/workflows/f81e9d66e7a74f6ebee37adfaa073eb0/triggers/test/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Ftest%2Frun&sv=1.0&sig=ZGs_UiiXUm8mtY1TiYH3ITPRN6VWXh7yXUumnoawbBg";
             var client = new HttpClient();
 
             var response = await client.GetAsync(logicAppUrl);
 
-           // var request = new HttpRequestMessage(HttpMethod.Post, logicAppUrl);
-           // request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token.Value);
+            // var request = new HttpRequestMessage(HttpMethod.Post, logicAppUrl);
+            // request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token.Value);
 
-             //var client = new HttpClient();
+            //var client = new HttpClient();
             //var response = await client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
