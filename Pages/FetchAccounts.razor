@@ -170,7 +170,6 @@
         var redirectUri = "https://localhost:7276/auth-callback";
 
         var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
-        //await JS.InvokeVoidAsync("open", authorizationUrl, "_self");
         Navigation.NavigateTo(authorizationUrl, forceLoad: true);
     }
 
@@ -181,23 +180,10 @@
 
         try
         {
-
-            //if ((_token).Value == null)
-            //{
-            // Optionally handle the error if the token is not available
-            //Console.WriteLine("Token not found. Please check authentication.");
-            // return;
-            //}
             var logicAppUrl = "https://prod-199.westeurope.logic.azure.com:443/workflows/f81e9d66e7a74f6ebee37adfaa073eb0/triggers/test/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Ftest%2Frun&sv=1.0&sig=ZGs_UiiXUm8mtY1TiYH3ITPRN6VWXh7yXUumnoawbBg";
             var client = new HttpClient();
 
             var response = await client.GetAsync(logicAppUrl);
-
-            // var request = new HttpRequestMessage(HttpMethod.Post, logicAppUrl);
-            // request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token.Value);
-
-            //var client = new HttpClient();
-            //var response = await client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -222,7 +208,6 @@
     }
 
     //Just the properties of the Account EntityType used for this sample
-    // See https://learn.microsoft.com/power-apps/developer/data-platform/webapi/reference/account
     public class Account
     {
 
@@ -239,8 +224,7 @@
 
     }
 
-    //Just the properties of the Contact EntityType that are expanded from the Account entity
-    // See https://learn.microsoft.com/power-apps/developer/data-platform/webapi/reference/contact
+ 
     public class Contact
     {
 
@@ -260,7 +244,6 @@
     }
 
     //Contains data from the Web API
-    //See https://learn.microsoft.com/powerapps/developer/data-platform/webapi/compose-http-requests-handle-errors#parse-errors-from-the-response
     public class ErrorDetail
     {
         public string code { get; set; }
