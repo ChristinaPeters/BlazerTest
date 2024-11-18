@@ -1,11 +1,11 @@
 ﻿@page "/auth-callback"
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
-
+@inject AuthServicecs AuthServices
 <h3>Signing in...</h3>
 
 @code {
-    private string? authorizationCode; // Declare a global field for the authorization code
+    private string? authorizationCode ; // Declare a global field for the authorization code
 
     protected override async Task OnInitializedAsync()
     {
@@ -15,6 +15,7 @@
         {
             // Store the code in the global variable
             authorizationCode = code;
+            AuthServices.AuthorizationCode = authorizationCode;
 
             // Use the authorization code to request tokens and store the result in a variable
             await ExchangeAuthorizationCodeForToken(authorizationCode);

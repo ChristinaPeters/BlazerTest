@@ -30,5 +30,6 @@ builder.Services.AddMsalAuthentication(options =>
         .Add($"{resourceUrl}/user_impersonation");
 
 });
+builder.Services.AddSingleton<AuthServicecs>();
 
 await builder.Build().RunAsync();
