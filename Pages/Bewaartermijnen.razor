@@ -25,7 +25,6 @@
                         <th>Site</th>
                         <th>Bibiotheek</th>
                         <th>InhoudsType</th>
-                        <th>E-Content EventTypes</th>
                         <th>Bewaartermijn</th>
                         <th>ContentTypeAbbreviation</th>
                         <th>SiteNameAbbreviation</th>
@@ -38,7 +37,11 @@
                     @foreach (Bewaartermijn bewaartermijn in bewaartermijnen.value)
                     {
                         <tr id="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid">
-
+                            <td>
+                                @((bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid != null)
+                                    ? bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid
+                                    : string.Empty)
+                            </td>
                             <td>
                                 @((bewaartermijn.cr971_cr4b0_site != null)
                                     ? bewaartermijn.cr971_cr4b0_site
@@ -52,11 +55,6 @@
                             <td>
                                 @((bewaartermijn.cr971_cr4b0_inhoudstype != null)
                                     ? bewaartermijn.cr971_cr4b0_inhoudstype
-                                    : string.Empty)
-                            </td>
-                            <td>
-                                @((bewaartermijn.cr971_econtenteventtypes != null)
-                                    ? bewaartermijn.cr971_econtenteventtypes
                                     : string.Empty)
                             </td>
                             <td>
@@ -145,7 +143,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                    "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek")
+                                                                        "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
