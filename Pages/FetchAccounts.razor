@@ -20,47 +20,29 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Main Phone</th>
-                        <th>City</th>
-                        <th>Primary Contact</th>
-                        <th>Email (Primary Contact)</th>
+                        <th>Site</th>
+                        <th>Bibiotheek</th>
+                      
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (Account account in accounts.value)
                     {
-                        <tr id="@account.accountid">
+                        <tr id="@account.cr971_cr4b0_econtentbewaartermijnensid">
+
                             <td>
-                                @((account.name != null)
-                                    ? account.name
+                            @((account.cr971_cr4b0_site != null)
+                                ? account.cr971_cr4b0_site
                                     : string.Empty)
                             </td>
                             <td>
-                                @((account.telephone1 != null)
-                                    ? account.telephone1
+                            @((account.cr971_cr4b0_bibliotheek != null)
+                                ? account.cr971_cr4b0_bibliotheek
                                     : string.Empty)
                             </td>
-                            <td>
-                                @((account.address1_city != null)
-                                    ? account.address1_city
-                                    : string.Empty)
-                            </td>
-                            <td>
-                                @((account.primarycontactid != null)
-                                    ? (account.primarycontactid.fullname != null
-                                    ? account.primarycontactid.fullname
-                                    : string.Empty)
-                                    : string.Empty)
-                            </td>
-                            <td>
-                                @((account.primarycontactid != null)
-                                    ? (account.primarycontactid.emailaddress1 != null
-                                    ? account.primarycontactid.emailaddress1
-                                    : string.Empty)
-                                    : string.Empty)
-                            </td>
+
                         </tr>
+                      
                     }
                 </tbody>
             </table>
@@ -115,9 +97,8 @@
             var request = new HttpRequestMessage()
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri($"{client.BaseAddress}accounts?" +
-                        "$select=name,telephone1,address1_city&" +
-                        "$expand=primarycontactid($select=fullname,emailaddress1)")
+                    RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
+                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -136,6 +117,7 @@
 
             if (response.IsSuccessStatusCode)
             {
+               
                 //Parse the JSON returned into a strongly typed AccountCollection
                 accounts = await response.Content.ReadFromJsonAsync<AccountCollection>();
             }
@@ -211,15 +193,13 @@
     public class Account
     {
 
-        public Guid accountid { get; set; }
+        public Guid cr971_cr4b0_econtentbewaartermijnensid
+        { get; set; }
 
-        public string name { get; set; }
+        public string cr971_cr4b0_site { get; set; }
 
-        public string telephone1 { get; set; }
+        public string cr971_cr4b0_bibliotheek { get; set; }
 
-        public string address1_city { get; set; }
-
-        public Contact primarycontactid { get; set; }
 
 
     }
