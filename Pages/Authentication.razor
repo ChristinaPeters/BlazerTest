@@ -1,12 +1,20 @@
 ﻿@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="OnLoginSucceeded" />
+@inject NavigationManager Navigation
 
 @code{
     [Parameter] public string? Action { get; set; }
 
     private void OnLoginSucceeded()
     {
-        // do your stuff here
+        var client = new HttpClient();
+
+        var tenantId = "823abcf0-d47f-4968-a240-f3d8bc9cb9df";
+        var clientId = "cd688eb0-90d6-42c5-92e8-5091efdc2d14";
+        var redirectUri = "https://localhost:7276/auth-callback";
+
+        var authorizationUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?client_id={clientId}&response_type=code&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_mode=query&scope=offline_access%20RecordsManagement.Read.All";
+        Navigation.NavigateTo(authorizationUrl, forceLoad: true);
     }
 }
