@@ -1,4 +1,4 @@
-﻿@page "/fetchaccounts"
+﻿@page "/bewaartermijnen"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net.Http.Headers
 @using System.Net.Http.Json
@@ -6,7 +6,7 @@
 @using System.Text.Json.Serialization;
 @inject IAccessTokenProvider TokenProvider
 @inject IHttpClientFactory ClientFactory
-@inject ILogger<FetchAccounts> logger;
+@inject ILogger<Bewaartermijnen> logger;
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @inject AuthServicecs AuthServices
@@ -14,9 +14,9 @@
 <AuthorizeView>
     @*Only show the list if the user is signed in and authorized*@
     <Authorized>
-        <h3>Fetch Accounts</h3>
+        <h3>E-Content Bewaartermijnen</h3>
 
-        @if (accounts != null)
+        @if (bewaartermijnen != null)
         {
             <table class="table">
                 <thead>
@@ -27,18 +27,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Account account in accounts.value)
+                    @foreach (Bewaartermijn bewaartermijn in bewaartermijnen.value)
                     {
-                        <tr id="@account.cr971_cr4b0_econtentbewaartermijnensid">
+                        <tr id="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid">
 
                             <td>
-                            @((account.cr971_cr4b0_site != null)
-                                ? account.cr971_cr4b0_site
+                                @((bewaartermijn.cr971_cr4b0_site != null)
+                                    ? bewaartermijn.cr971_cr4b0_site
                                     : string.Empty)
                             </td>
                             <td>
-                            @((account.cr971_cr4b0_bibliotheek != null)
-                                ? account.cr971_cr4b0_bibliotheek
+                                @((bewaartermijn.cr971_cr4b0_bibliotheek != null)
+                                    ? bewaartermijn.cr971_cr4b0_bibliotheek
                                     : string.Empty)
                             </td>
 
@@ -67,7 +67,7 @@
 
 @code {
     //The collection of Account records to display
-    private AccountCollection accounts;
+    private BewaartermijnCollection bewaartermijnen;
 
     //An informational message
     private string message = "Loading...";
@@ -119,7 +119,7 @@
             {
 
                 //Parse the JSON returned into a strongly typed AccountCollection
-                accounts = await response.Content.ReadFromJsonAsync<AccountCollection>();
+                bewaartermijnen = await response.Content.ReadFromJsonAsync<BewaartermijnCollection>();
             }
             else
             {
@@ -166,7 +166,7 @@
 
         
                 
-                var data = new { AuthorizationCode = authorizationCode, accounts = accounts };
+            var data = new { AuthorizationCode = authorizationCode, bewaartermijnen = bewaartermijnen };
         
 
             string jsonData = System.Text.Json.JsonSerializer.Serialize(data);
@@ -197,13 +197,13 @@
 
 
     // The result will be a JSON object with an array of entities set to the value property
-    public class AccountCollection
+    public class BewaartermijnCollection
     {
-        public Account[] value { get; set; }
+        public Bewaartermijn[] value { get; set; }
     }
 
     //Just the properties of the Account EntityType used for this sample
-    public class Account
+    public class Bewaartermijn
     {
 
         public Guid cr971_cr4b0_econtentbewaartermijnensid
