@@ -21,9 +21,17 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>E-Content Bewaartermijn ID</th>
                         <th>Site</th>
                         <th>Bibiotheek</th>
-                      
+                        <th>InhoudsType</th>
+                        <th>E-Content EventTypes</th>
+                        <th>Bewaartermijn</th>
+                        <th>ContentTypeAbbreviation</th>
+                        <th>SiteNameAbbreviation</th>
+                        <th>LibaryNameAbbreviation</th>
+                        <th>ReviewSetting</th>
+                        <th>Label name</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,9 +49,48 @@
                                     ? bewaartermijn.cr971_cr4b0_bibliotheek
                                     : string.Empty)
                             </td>
-
+                            <td>
+                                @((bewaartermijn.cr971_cr4b0_inhoudstype != null)
+                                    ? bewaartermijn.cr971_cr4b0_inhoudstype
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_econtenteventtypes != null)
+                                    ? bewaartermijn.cr971_econtenteventtypes
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_cr4b0_bewaartermijn != null)
+                                    ? bewaartermijn.cr971_cr4b0_bewaartermijn
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_contenttypeabbreviatio != null)
+                                    ? bewaartermijn.cr971_contenttypeabbreviatio
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_sitenameabbreviation != null)
+                                    ? bewaartermijn.cr971_sitenameabbreviation
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_librarynameabbreviation != null)
+                                    ? bewaartermijn.cr971_librarynameabbreviation
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_reviewsettingstest != null)
+                                    ? bewaartermijn.cr971_reviewsettingstest
+                                    : string.Empty)
+                            </td>
+                            <td>
+                                @((bewaartermijn.cr971_labelname != null)
+                                    ? bewaartermijn.cr971_labelname
+                                    : string.Empty)
+                            </td>
                         </tr>
-                      
+
                     }
                 </tbody>
             </table>
@@ -98,7 +145,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek")
+                                    "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -164,10 +211,10 @@
         {
             var authorizationCode = AuthServices.AuthorizationCode;
 
-        
-                
+
+
             var data = new { AuthorizationCode = authorizationCode, bewaartermijnen = bewaartermijnen };
-        
+
 
             string jsonData = System.Text.Json.JsonSerializer.Serialize(data);
 
@@ -213,11 +260,25 @@
 
         public string cr971_cr4b0_bibliotheek { get; set; }
 
+        public string cr971_cr4b0_inhoudstype { get; set; }
 
+        public string cr971_econtenteventtypes { get; set; }
+
+        public string cr971_cr4b0_bewaartermijn { get; set; }
+
+        public string cr971_contenttypeabbreviatio { get; set; }
+
+        public string cr971_sitenameabbreviation { get; set; }
+
+        public string cr971_librarynameabbreviation { get; set; }
+
+        public string cr971_reviewsettingstest { get; set; }
+
+        public string cr971_labelname { get; set; }
 
     }
 
- 
+
     public class Contact
     {
 
