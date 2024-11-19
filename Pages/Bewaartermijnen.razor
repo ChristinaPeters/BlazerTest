@@ -21,6 +21,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>Bewerk een bewaartermijn</th>
                         <th>E-Content Bewaartermijn ID</th>
                         <th>Site</th>
                         <th>Bibiotheek</th>
@@ -38,6 +39,9 @@
                     @foreach (Bewaartermijn bewaartermijn in bewaartermijnen.value)
                     {
                         <tr id="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid">
+                            <td>
+                                <a type="button" class="btn btn-primary" href="/bewaartermijnen/edit">Edit</a>
+                            </td>
                             <td>
                                 @((bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid != null)
                                     ? bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid
@@ -104,8 +108,8 @@
                     }
                 </tbody>
             </table>
-            <button @onclick="TriggerLogicAppOnButtonClick">Call Logic App</button>
-            <button @onclick="GetAUth">Login with Azure AD</button>
+            <button type="button" class="btn btn-primary" @onclick="TriggerLogicAppOnButtonClick">Call Logic App</button>
+            <button type="button" class="btn btn-primary" @onclick="GetAUth">Login with Azure AD</button>
 
 
 
