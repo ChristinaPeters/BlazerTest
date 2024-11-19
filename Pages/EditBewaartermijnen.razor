@@ -1,16 +1,35 @@
-﻿@page "/bewaartermijnen/{id}"
+﻿@page "/bewaartermijnen/{IdBewaartermijn:guid}"
 
 
 <h3>Bewerk een Bewaartermijn</h3>
 <br />
-@id
+
+@if (bewaartermijn != null)
+{
+    <p>
+        @bewaartermijn.cr971_cr4b0_bibliotheek
+    </p>
+    <p>
+        @bewaartermijn.cr971_cr4b0_inhoudstype
+    </p>
+    <p>
+        @bewaartermijn.cr971_cr4b0_bewaartermijn
+    </p>
+}
+
 
 @code {
     [Parameter]
-    public string? id { get; set; }
+    public Guid? IdBewaartermijn { get; set; }
+
+    private Bewaartermijn? bewaartermijn;
+    private BewaartermijnCollection bewaartermijnCollection;
+
 
     protected override void OnParametersSet()
     {
-        
+        bewaartermijn = bewaartermijnCollection.GetBewaartermijnById(IdBewaartermijn.Value);
+
     }
+
 }

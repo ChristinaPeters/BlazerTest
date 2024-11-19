@@ -4,15 +4,19 @@ namespace BlazerTest.Models
 {
     public class BewaartermijnCollection
     {
+        //Properties
         public Bewaartermijn[] value { get; set; }
 
+        //Constructor
         private readonly List<Bewaartermijn>? _bewaartermijn;
 
+        //Constructor
         public BewaartermijnCollection()
         {
             _bewaartermijn = new List<Bewaartermijn>();
         }
 
+        //Add bewaartermijn
         public void AddBewaartermijn(Bewaartermijn bewaartermijn)
         {
             if (bewaartermijn == null)
@@ -29,6 +33,8 @@ namespace BlazerTest.Models
             _bewaartermijn.Add(bewaartermijn);
 
         }
+
+        //Edit bewaartermijn
         public void EditBewaartermijn(Bewaartermijn updatedBewaartermijn)
         {
             if (updatedBewaartermijn == null)
@@ -54,6 +60,7 @@ namespace BlazerTest.Models
             existingBewaartermijn.cr971_labelname = updatedBewaartermijn.cr971_labelname;
         }
 
+        //Delete bewaartermijn by id
         public void DeleteBewaartermijn(Guid bewaartermijnId)
         {
             var bewaartermijn = _bewaartermijn.FirstOrDefault(b => b.cr971_cr4b0_econtentbewaartermijnensid == bewaartermijnId);
@@ -65,18 +72,21 @@ namespace BlazerTest.Models
             _bewaartermijn.Remove(bewaartermijn);
         }
 
-        public Bewaartermijn GetBewaartermijn(Guid bewaartermijnId)
-        {
-            return _bewaartermijn.FirstOrDefault(b => b.cr971_cr4b0_econtentbewaartermijnensid == bewaartermijnId);
-        }
-
+        //Get all stored bewaartermijnen objects
         public IEnumerable<Bewaartermijn> GetBewaartermijnen()
         {
             return _bewaartermijn;
         }
-
-        
-
+        //Get bewaartermijn by id
+        public Bewaartermijn GetBewaartermijnById(Guid bewaartermijnId)
+        {
+            var bewaartermijn = _bewaartermijn.FirstOrDefault(b => b.cr971_cr4b0_econtentbewaartermijnensid == bewaartermijnId);
+            if (bewaartermijn == null)
+            {
+                throw new ArgumentException("Bewaartermijn not found.", nameof(bewaartermijnId));
+            }
+            return bewaartermijn;
+        }
     }
 
 }
