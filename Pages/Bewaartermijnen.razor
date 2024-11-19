@@ -40,7 +40,7 @@
                     {
                         <tr id="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid">
                             <td>
-                                <a type="button" class="btn btn-primary" href="/bewaartermijnen/edit">Edit</a>
+                                <a type="button" class="btn btn-primary" href="/bewaartermijnen/@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid">Edit</a>
                             </td>
                             <td>
                                 @((bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid != null)
@@ -254,68 +254,5 @@
         {
             message = $"Error: {ex.Message}";
         }
-    }
-
-
-    // The result will be a JSON object with an array of entities set to the value property
-    public class BewaartermijnCollection
-    {
-        public Bewaartermijn[] value { get; set; }
-    }
-
-    //Just the properties of the Account EntityType used for this sample
-    public class Bewaartermijn
-    {
-
-        public Guid cr971_cr4b0_econtentbewaartermijnensid
-        { get; set; }
-
-        public string cr971_cr4b0_site { get; set; }
-
-        public string cr971_cr4b0_bibliotheek { get; set; }
-
-        public string cr971_cr4b0_inhoudstype { get; set; }
-
-        public string cr971_econtenteventtypes { get; set; }
-
-        public string cr971_cr4b0_bewaartermijn { get; set; }
-
-        public string cr971_contenttypeabbreviatio { get; set; }
-
-        public string cr971_sitenameabbreviation { get; set; }
-
-        public string cr971_librarynameabbreviation { get; set; }
-
-        public string cr971_reviewsettingstest { get; set; }
-
-        public string cr971_labelname { get; set; }
-
-    }
-
-
-    public class Contact
-    {
-
-        public string fullname { get; set; }
-
-        public string emailaddress1 { get; set; }
-    }
-
-    // Contains the error data returned by the Web API and the HttpMessageResponse
-    public class Error
-    {
-        [JsonPropertyName("error")]
-        public ErrorDetail detail { get; set; }
-        public int statuscode { get; set; }
-        public string reason { get; set; }
-
-    }
-
-    //Contains data from the Web API
-    public class ErrorDetail
-    {
-        public string code { get; set; }
-        public string message { get; set; }
-
     }
 }

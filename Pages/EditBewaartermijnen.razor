@@ -1,7 +1,16 @@
-﻿@page "/bewaartermijnen/edit"
+﻿@page "/bewaartermijnen/{id}"
+
 
 <h3>Bewerk een Bewaartermijn</h3>
+<br />
+@id
 
 @code {
+    [Parameter]
+    public string? id { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        
+    }
 }
