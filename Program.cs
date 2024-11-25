@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazerTest;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.Services.AddTelerikBlazor();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
