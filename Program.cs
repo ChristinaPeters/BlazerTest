@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazerTest;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddTelerikBlazor();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
@@ -12,6 +11,8 @@ var DataverseWebApiConfig = builder.Configuration.GetSection("DataverseWebApi");
 var resourceUrl = DataverseWebApiConfig.GetSection("ResourceUrl").Value;
 var version = DataverseWebApiConfig.GetSection("Version").Value;
 var timeoutSeconds = int.Parse(DataverseWebApiConfig.GetSection("TimeoutSeconds").Value);
+
+builder.Services.AddTelerikBlazor();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
