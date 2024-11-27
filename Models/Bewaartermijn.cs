@@ -25,4 +25,5 @@
 
         public string cr971_labelname { get; set; }
     }
+
 }
