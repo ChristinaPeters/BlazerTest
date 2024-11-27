@@ -17,17 +17,48 @@
     <Authorized Context="authContext">
         <h3>Bewaartermijnen</h3>
 
-        <TelerikGrid Data="@TermijnenData"
+        <TelerikGrid @ref="@GridRef"
+                     Data="@TermijnenData"
                      Pageable="true"
                      Sortable="true"
                      FilterMode="@GridFilterMode.FilterRow"
                      EditMode="@GridEditMode.Popup"
-                     OnEdit="@EditHandler" OnUpdate="@UpdateHandler" OnCreate="@CreateHandler">
+                    >
             <GridSettings>
                 <GridPopupEditSettings MaxWidth="1500px" MaxHeight="900px" Class="custom-popup"></GridPopupEditSettings>
-                <GridPopupEditFormSettings Orientation="@FormOrientation.Horizontal"
-                                           ButtonsLayout="FormButtonsLayout.Center"
-                                           Columns="3">
+                <GridPopupEditFormSettings Context="FormContext">
+                    <FormTemplate>
+                        @{
+                            EditItem = FormContext.Item as Bewaartermijn;
+                            <TelerikForm Model="@EditItem" ColumnSpacing="20px" Columns="3" ButtonsLayout="@FormButtonsLayout.Stretch" OnValidSubmit="@OnValidSubmit">
+                                <FormItems>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_inhoudstype)" LabelText="InhoudsType"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_site)" LabelText="Site"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_bibliotheek)" LabelText="Bibliotheek"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_inhoudstype)" LabelText="InhoudsType"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_bewaartermijn)" LabelText="Bewaartermijn"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_contenttypeabbreviatio)" LabelText="ContentTypeAbbreviatio"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_sitenameabbreviation)" LabelText="SiteNameAbbreviation"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_librarynameabbreviation)" LabelText="LibraryNameAbbreviation"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_reviewsettingstest)" LabelText="ReviewSettings"></FormItem>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_labelname)" LabelText="Label Name"></FormItem>
+                                    <FormItem>
+                                        <Template>
+                                            <label for="cr971_econtenteventtypes">Custom eventTypes Label</label>
+                                            <TelerikDropDownList Data="@eventTypes"
+                                                                 @bind-Value="@EditItem.cr971_econtenteventtypes"
+                                                                 Id="cr971_econtenteventtypes">
+                                            </TelerikDropDownList>
+                                        </Template>
+                                    </FormItem>
+                                </FormItems>
+                                <FormButtons>
+                                    <TelerikButton Icon="@nameof(SvgIcon.Save)">Save</TelerikButton>
+                                    <TelerikButton Icon="@nameof(SvgIcon.Cancel)" ButtonType="@ButtonType.Button" OnClick="@OnCancel">Cancel</TelerikButton>
+                                </FormButtons>
+                            </TelerikForm>
+                        }
+                    </FormTemplate>
                 </GridPopupEditFormSettings>
             </GridSettings>
             <GridToolBarTemplate>
@@ -57,12 +88,14 @@
     </NotAuthorized>
 </AuthorizeView>
 @code {
-    //The collection of Account records to display
+
     private BewaartermijnCollection bewaartermijnen;
-
     private List<Bewaartermijn> TermijnenData;
+    private List<string> eventTypes = new List<string> { "pietje", "puk", "huur" };
 
-    //An informational message
+    private Bewaartermijn EditItem { get; set; }
+    private TelerikGrid<Bewaartermijn> GridRef { get; set; }
+
     private string message = "Loading...";
 
     //Contains data about an error returned from the Web API
@@ -91,7 +124,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                                                                                                                                                        "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
+                                                                                                                                                                                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -138,6 +171,8 @@
 
     }
 
+
+
     private async Task GetAUth()
     {
 
@@ -151,37 +186,29 @@
         Navigation.NavigateTo(authorizationUrl, forceLoad: true);
     }
 
-    private void EditHandler(GridCommandEventArgs args)
-    {
-        if (args.IsNew) // If it's a new entry, initialize a new object
-        {
-            args.Item = new Bewaartermijn();
-        }
-    }
 
-    private async Task UpdateHandler(GridCommandEventArgs args)
-    {
-        if (args.Item is Bewaartermijn updatedItem)
-        {
+    private async Task UpdateRetentionLabel(Bewaartermijn retentionLabel)
+    {       
             try
             {
                 // Find the original item to update in TermijnenData
                 var originalItem = TermijnenData.FirstOrDefault(t =>
-                    t.cr971_cr4b0_econtentbewaartermijnensid == updatedItem.cr971_cr4b0_econtentbewaartermijnensid); // Adjust based on unique identifier
+                t.cr971_cr4b0_econtentbewaartermijnensid == retentionLabel.cr971_cr4b0_econtentbewaartermijnensid); // Adjust based on unique identifier
 
                 if (originalItem != null)
                 {
                     // Update all fields of the original item
-                    originalItem.cr971_cr4b0_bibliotheek = updatedItem.cr971_cr4b0_bibliotheek;
-                    originalItem.cr971_cr4b0_site = updatedItem.cr971_cr4b0_site;
-                    originalItem.cr971_cr4b0_inhoudstype = updatedItem.cr971_cr4b0_inhoudstype;
-                    originalItem.cr971_econtenteventtypes = updatedItem.cr971_econtenteventtypes;
-                    originalItem.cr971_cr4b0_bewaartermijn = updatedItem.cr971_cr4b0_bewaartermijn;
-                    originalItem.cr971_contenttypeabbreviatio = updatedItem.cr971_contenttypeabbreviatio;
-                    originalItem.cr971_sitenameabbreviation = updatedItem.cr971_sitenameabbreviation;
-                    originalItem.cr971_librarynameabbreviation = updatedItem.cr971_librarynameabbreviation;
-                    originalItem.cr971_reviewsettingstest = updatedItem.cr971_reviewsettingstest;
-                    originalItem.cr971_labelname = updatedItem.cr971_labelname;
+                    //TODO: Check with Oscar if this is the okay way, since it is a lot of code :( )
+                originalItem.cr971_cr4b0_bibliotheek = retentionLabel.cr971_cr4b0_bibliotheek;
+                originalItem.cr971_cr4b0_site = retentionLabel.cr971_cr4b0_site;
+                originalItem.cr971_cr4b0_inhoudstype = retentionLabel.cr971_cr4b0_inhoudstype;
+                originalItem.cr971_econtenteventtypes = retentionLabel.cr971_econtenteventtypes;
+                originalItem.cr971_cr4b0_bewaartermijn = retentionLabel.cr971_cr4b0_bewaartermijn;
+                originalItem.cr971_contenttypeabbreviatio = retentionLabel.cr971_contenttypeabbreviatio;
+                originalItem.cr971_sitenameabbreviation = retentionLabel.cr971_sitenameabbreviation;
+                originalItem.cr971_librarynameabbreviation = retentionLabel.cr971_librarynameabbreviation;
+                originalItem.cr971_reviewsettingstest = retentionLabel.cr971_reviewsettingstest;
+                originalItem.cr971_labelname = retentionLabel.cr971_labelname;
                 }
                 // Optional: Save updated data to the backend
                 // var client = ClientFactory.CreateClient("DataverseClient");
@@ -204,28 +231,56 @@
             {
                 logger.LogError($"Error updating item: {ex.Message}");
             }
-        }
     }
-    private async Task CreateHandler(GridCommandEventArgs args)
+
+    private async Task CreateRetentionLabel(Bewaartermijn retentionLabel)
     {
-        if (args.Item is Bewaartermijn newItem)
-        {
+        
             // Generate a unique ID for the new item
-            newItem.cr971_cr4b0_econtentbewaartermijnensid = Guid.NewGuid();
+            retentionLabel.cr971_cr4b0_econtentbewaartermijnensid = Guid.NewGuid();
 
             // Add the new item to the data source
-            TermijnenData.Add(newItem);
+        TermijnenData.Add(retentionLabel);
 
             await InvokeAsync(StateHasChanged);
 
             await JS.InvokeVoidAsync("alert", "New row added successfully!");
-
-            // Optionally refresh the grid (if required)
-            await Task.Delay(10); 
-        }
     }
 
+    private async Task OnValidSubmit()
+    {
+        //TODO: TEST Check if the record is new or update
+        if (EditItem.cr971_cr4b0_econtentbewaartermijnensid != default) //TODO check
+        {
+            UpdateRetentionLabel(EditItem);
+        }
+        else
+        {
+            CreateRetentionLabel(EditItem);
+        }
+        //Send the whole dataset to logic apps
 
+        await ExitEditAsync();
+
+        //do NOT update the dataset again from dataverse but keep everything in memory
+        //TODO: ask how this should work
+    }
+
+    private async Task OnCancel()
+    {
+
+        await ExitEditAsync();
+    }
+
+    private async Task ExitEditAsync()
+    {
+        var state = GridRef?.GetState();
+        state.OriginalEditItem = null;
+        state.EditItem = null;
+        state.InsertedItem = null;
+
+        await GridRef?.SetStateAsync(state);
+    }
 
 
     // private async Task TriggerLogicAppOnButtonClick()
@@ -264,5 +319,5 @@
     //     {
     //         message = $"Error: {ex.Message}";
     //     }
-    }
+}
 
