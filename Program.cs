@@ -12,6 +12,8 @@ var resourceUrl = DataverseWebApiConfig.GetSection("ResourceUrl").Value;
 var version = DataverseWebApiConfig.GetSection("Version").Value;
 var timeoutSeconds = int.Parse(DataverseWebApiConfig.GetSection("TimeoutSeconds").Value);
 
+builder.Services.AddTelerikBlazor();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 // Create an named definition of an HttpClient that can be created in a component page
