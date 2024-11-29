@@ -82,10 +82,56 @@
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_contenttypeabbreviatio)" Title="ContentTypeAbbreviatio" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_sitenameabbreviation)" Title="SiteNameAbbreviation" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_librarynameabbreviation)" Title="LibraryNaSmeAbbreviation" />
-                <GridColumn Field="@nameof(Bewaartermijn.cr971_reviewsettingstest)" Title="ReviewSettings" />
+                <GridColumn Field="@nameof(Bewaartermijn.cr971_reviewsettingstest)" Title="ReviewSettings">
+                    <Template>
+                        @{
+                            Bewaartermijn bewaartermijn = (Bewaartermijn)context;
+                            <span data-bewaartermijnid="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid" class="tooltip-target">@bewaartermijn.cr971_reviewsettingstest</span>
+                        }
+                    </Template>
+                </GridColumn>
+
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_labelname)" Title="Label Name" />
             </GridColumns>
         </TelerikGrid>
+        <TelerikTooltip TargetSelector=".tooltip-target"
+                        Width="250px" Height="250px"
+                        Position="@TooltipPosition.Right">
+            <Template>
+                <h6>Review Settings</h6>
+                <hr />
+                @{
+                   
+                    Guid BewaartermijnID = Guid.Empty;
+                    if (context.DataAttributes != null && context.DataAttributes.ContainsKey("data-bewaartermijnid"))
+                    {
+                       // Parse the Guid from the data attribute
+                        BewaartermijnID = Guid.Parse(context.DataAttributes["data-bewaartermijnid"]);
+                        Console.WriteLine($"Tooltip Data Attribute ID: {BewaartermijnID}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tooltip Data Attributes do not contain 'data-bewaartermijnid'.");
+                    }
+
+                    //Fetch data using the Guid
+                    var BewaartermijnDetailsData = GetDataReviewSettings(BewaartermijnID);
+                    if (BewaartermijnDetailsData != null)
+                    {
+                        <div>
+                            <p><strong>Bibliotheek</strong>: @BewaartermijnDetailsData.cr971_cr4b0_bibliotheek</p>
+                            <p><strong>InhoudsType</strong>: @BewaartermijnDetailsData.cr971_cr4b0_inhoudstype</p>
+                            <p><strong>Site</strong>: @BewaartermijnDetailsData.cr971_cr4b0_site</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No details found for this ID.</p>
+                    }
+                }
+
+            </Template>
+        </TelerikTooltip>
     </Authorized>
     <NotAuthorized>
         <h3>Authentication Failure!</h3>
@@ -130,7 +176,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                                                                                                                                                                                                                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
+                                                                                                                                                                                                                                                        "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -324,42 +370,18 @@
         await GridRef?.SetStateAsync(state);
     }
 
-
-    // private async Task TriggerLogicAppOnButtonClick()
-    // {
-
-    //     try
-    //     {
-    //         var authorizationCode = AuthServices.AuthorizationCode;
-
-
-
-    //         var data = new { AuthorizationCode = authorizationCode, bewaartermijnen = bewaartermijnen };
-
-
-    //         string jsonData = System.Text.Json.JsonSerializer.Serialize(data);
-
-    //         // Create the HTTP content
-    //         var content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
-    //         Console.WriteLine(jsonData);
-    //         var logicAppUrl = "https://prod-199.westeurope.logic.azure.com:443/workflows/f81e9d66e7a74f6ebee37adfaa073eb0/triggers/test/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Ftest%2Frun&sv=1.0&sig=ZGs_UiiXUm8mtY1TiYH3ITPRN6VWXh7yXUumnoawbBg";
-    //         var client = new HttpClient();
-
-
-    //         var response = await client.PostAsync(logicAppUrl, content);
-
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             message = "Logic App triggered successfully!";
-    //         }
-    //         else
-    //         {
-    //             message = $"Failed to trigger Logic App. Status code: {response.StatusCode}";
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         message = $"Error: {ex.Message}";
-    //     }
+    private Bewaartermijn GetDataReviewSettings(Guid bewaartermijnId)
+    {
+        // var bewaartermijn = TermijnenData.FirstOrDefault(t => t.cr971_cr4b0_econtentbewaartermijnensid == bewaartermijnId);
+        // return bewaartermijn;
+        Console.WriteLine($"Searching for ID: {bewaartermijnId}");
+        var bewaartermijn = TermijnenData.FirstOrDefault(t => t.cr971_cr4b0_econtentbewaartermijnensid == bewaartermijnId);
+        if (bewaartermijn == null)
+        {
+            Console.WriteLine("No matching bewaartermijn found.");
+        }
+        return bewaartermijn;
+    }
+  
 }
 

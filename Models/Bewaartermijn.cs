@@ -16,7 +16,6 @@ namespace BlazerTest.Models
         [Required(ErrorMessage = "Enter the purpose of this Retention Label.")]
         public string cr971_cr4b0_inhoudstype { get; set; }
 
-        [Required(ErrorMessage = "Choose one of the options")]
         public string cr971_econtenteventtypes { get; set; }
 
         [Required(ErrorMessage = "Specify the number of years it needs to be retained.")]
