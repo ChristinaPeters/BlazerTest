@@ -11,6 +11,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @inject AuthServicecs AuthServices
+@using System.ComponentModel.DataAnnotations
 
 <AuthorizeView>
 
@@ -22,8 +23,7 @@
                      Pageable="true"
                      Sortable="true"
                      FilterMode="@GridFilterMode.FilterRow"
-                     EditMode="@GridEditMode.Popup"
-                    >
+                     EditMode="@GridEditMode.Popup">
             <GridSettings>
                 <GridPopupEditSettings MaxWidth="1500px" MaxHeight="900px" Class="custom-popup"></GridPopupEditSettings>
                 <GridPopupEditFormSettings Context="FormContext">
@@ -31,7 +31,11 @@
                         @{
                             EditItem = FormContext.Item as Bewaartermijn;
                             <TelerikForm Model="@EditItem" ColumnSpacing="20px" Columns="3" ButtonsLayout="@FormButtonsLayout.Stretch" OnValidSubmit="@OnValidSubmit">
+                                <FormValidation>
+                                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                                </FormValidation>
                                 <FormItems>
+                                    <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid)" LabelText="E-Content Bewaartermijn ID" Enabled="false"></FormItem>
                                     <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_inhoudstype)" LabelText="InhoudsType"></FormItem>
                                     <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_site)" LabelText="Site"></FormItem>
                                     <FormItem Field="@nameof(Bewaartermijn.cr971_cr4b0_bibliotheek)" LabelText="Bibliotheek"></FormItem>
@@ -56,6 +60,7 @@
                                     <TelerikButton Icon="@nameof(SvgIcon.Save)">Save</TelerikButton>
                                     <TelerikButton Icon="@nameof(SvgIcon.Cancel)" ButtonType="@ButtonType.Button" OnClick="@OnCancel">Cancel</TelerikButton>
                                 </FormButtons>
+
                             </TelerikForm>
                         }
                     </FormTemplate>
@@ -68,7 +73,7 @@
                 <GridCommandColumn Context="gridCommandContext">
                     <GridCommandButton Command="Edit" Icon="@SvgIcon.Pencil">Edit</GridCommandButton>
                 </GridCommandColumn>
-                <GridColumn Field="@nameof(Bewaartermijn.cr971_cr4b0_inhoudstype)" Title="E-Content Bewaartermijn ID" />
+                <GridColumn Field="@nameof(Bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid)" Title="E-Content Bewaartermijn ID" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_cr4b0_site)" Title="Site" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_cr4b0_bibliotheek)" Title="Bibliotheek" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_cr4b0_inhoudstype)" Title="InhoudsType" />
@@ -97,6 +102,7 @@
     private TelerikGrid<Bewaartermijn> GridRef { get; set; }
 
     private string message = "Loading...";
+    private string dataRetensionLable;
 
     //Contains data about an error returned from the Web API
     private Error error;
@@ -124,7 +130,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                                                                                                                                                                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
+                                                                                                                                                                                                                                                "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -188,17 +194,30 @@
 
 
     private async Task UpdateRetentionLabel(Bewaartermijn retentionLabel)
-    {       
-            try
-            {
-                // Find the original item to update in TermijnenData
-                var originalItem = TermijnenData.FirstOrDefault(t =>
-                t.cr971_cr4b0_econtentbewaartermijnensid == retentionLabel.cr971_cr4b0_econtentbewaartermijnensid); // Adjust based on unique identifier
+    {
+        try
+        {
+            // Find the original item to update in TermijnenData
+            var originalItem = TermijnenData.FirstOrDefault(t =>
+            t.cr971_cr4b0_econtentbewaartermijnensid == retentionLabel.cr971_cr4b0_econtentbewaartermijnensid); // Adjust based on unique identifier
 
-                if (originalItem != null)
-                {
-                    // Update all fields of the original item
-                    //TODO: Check with Oscar if this is the okay way, since it is a lot of code :( )
+            if (originalItem != null)
+            {
+                var updatedValues = new RetentionLabelUpdate
+                    {
+                        cr971_cr4b0_bibliotheek = retentionLabel.cr971_cr4b0_bibliotheek,
+                        cr971_cr4b0_site = retentionLabel.cr971_cr4b0_site,
+                        cr971_cr4b0_inhoudstype = retentionLabel.cr971_cr4b0_inhoudstype,
+                        cr971_econtenteventtypes = retentionLabel.cr971_econtenteventtypes,
+                        cr971_cr4b0_bewaartermijn = retentionLabel.cr971_cr4b0_bewaartermijn,
+                        cr971_contenttypeabbreviatio = retentionLabel.cr971_contenttypeabbreviatio,
+                        cr971_sitenameabbreviation = retentionLabel.cr971_sitenameabbreviation,
+                        cr971_librarynameabbreviation = retentionLabel.cr971_librarynameabbreviation,
+                        cr971_reviewsettingstest = retentionLabel.cr971_reviewsettingstest,
+                        cr971_labelname = retentionLabel.cr971_labelname
+                    };
+                // Update all fields of the original item
+                //TODO: Check with Oscar if this is the okay way, since it is a lot of code :( )
                 originalItem.cr971_cr4b0_bibliotheek = retentionLabel.cr971_cr4b0_bibliotheek;
                 originalItem.cr971_cr4b0_site = retentionLabel.cr971_cr4b0_site;
                 originalItem.cr971_cr4b0_inhoudstype = retentionLabel.cr971_cr4b0_inhoudstype;
@@ -209,42 +228,65 @@
                 originalItem.cr971_librarynameabbreviation = retentionLabel.cr971_librarynameabbreviation;
                 originalItem.cr971_reviewsettingstest = retentionLabel.cr971_reviewsettingstest;
                 originalItem.cr971_labelname = retentionLabel.cr971_labelname;
-                }
-                // Optional: Save updated data to the backend
-                // var client = ClientFactory.CreateClient("DataverseClient");
-                // client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token.Value);
 
-                // var response = await client.PutAsJsonAsync(
-                //     $"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses({updatedItem.cr971_cr4b0_inhoudstype})",
-                //     updatedItem); // Assuming `Id` is the unique identifier for the resource
+                var retensionLableData = new { updatedValues };
 
-                // if (response.IsSuccessStatusCode)
-                // {
-                //     logger.LogInformation("Update successful");
-                // }
-                // else
-                // {
-                //     logger.LogError($"Failed to update: {response.StatusCode}");
-                // }
+                await SendToLogicApp(retentionLabel);
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Error updating item: {ex.Message}");
-            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Error updating item: {ex.Message}");
+        }
+
+    }
+
+    private async Task SendToLogicApp(Bewaartermijn retentionLabel)
+    {
+        var authorizationCode = AuthServices.AuthorizationCode;
+        var dataAuthCode = new { AuthorizationCode = authorizationCode };
+        var combinedData = new
+        {
+            retentionLabel,
+            dataAuthCode
+        };
+
+        string jsonData = System.Text.Json.JsonSerializer.Serialize(combinedData);
+
+        Console.WriteLine("Combined Data: " + jsonData);
+
+        var content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+        Console.WriteLine(jsonData);
+        var logicAppUrl = "https://prod-41.westeurope.logic.azure.com:443/workflows/3a55565102cc4cfc89d9a2bc10b702a6/triggers/BlazorRequest/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FBlazorRequest%2Frun&sv=1.0&sig=Q-L1FNqYZpdL6KsdffXd4lG_l8M0TiFTurM7Ls8TGC8";
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.PostAsync(logicAppUrl, content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            message = "Logic App triggered successfully!";
+        }
+        else
+        {
+            message = $"Failed to trigger Logic App. Status code: {response.StatusCode}";
+        }
+
     }
 
     private async Task CreateRetentionLabel(Bewaartermijn retentionLabel)
     {
-        
-            // Generate a unique ID for the new item
-            retentionLabel.cr971_cr4b0_econtentbewaartermijnensid = Guid.NewGuid();
 
-            // Add the new item to the data source
+        // Generate a unique ID for the new item
+        retentionLabel.cr971_cr4b0_econtentbewaartermijnensid = Guid.NewGuid();
+
+        // Add the new item to the data source
         TermijnenData.Add(retentionLabel);
 
-            await InvokeAsync(StateHasChanged);
+        await SendToLogicApp(retentionLabel);
 
-            await JS.InvokeVoidAsync("alert", "New row added successfully!");
+        await InvokeAsync(StateHasChanged);
+
+        await JS.InvokeVoidAsync("alert", "New row added successfully!");
     }
 
     private async Task OnValidSubmit()
