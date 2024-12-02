@@ -33,5 +33,6 @@ builder.Services.AddMsalAuthentication(options =>
 
 });
 builder.Services.AddSingleton<AuthServicecs>();
+builder.Services.AddScoped<ReviewSettingsService>();
 
 await builder.Build().RunAsync();
