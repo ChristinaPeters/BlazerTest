@@ -83,10 +83,12 @@
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_sitenameabbreviation)" Title="SiteNameAbbreviation" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_librarynameabbreviation)" Title="LibraryNaSmeAbbreviation" />
                 <GridColumn Field="@nameof(Bewaartermijn.cr971_reviewsettingstest)" Title="ReviewSettings">
-                    <Template>
+                    <Template Context="ttipgridContext">
                         @{
-                            Bewaartermijn bewaartermijn = (Bewaartermijn)context;
-                            <span data-bewaartermijnid="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid" class="tooltip-target">@bewaartermijn.cr971_reviewsettingstest</span>
+                            Bewaartermijn bewaartermijn = (Bewaartermijn)ttipgridContext;
+                            <span data-bewaartermijnid="@bewaartermijn.cr971_cr4b0_econtentbewaartermijnensid.ToString()" class="tooltip-target">
+                                @bewaartermijn.cr971_reviewsettingstest
+                            </span>
                         }
                     </Template>
                 </GridColumn>
@@ -95,19 +97,19 @@
             </GridColumns>
         </TelerikGrid>
         <TelerikTooltip TargetSelector=".tooltip-target"
-                        Width="250px" Height="250px"
+                        Width="250px" Height="300px"
                         Position="@TooltipPosition.Right">
-            <Template>
+            <Template Context="ttipContext">
                 <h6>Review Settings</h6>
                 <hr />
                 @{
-                   
-                    Guid BewaartermijnID = Guid.Empty;
-                    if (context.DataAttributes != null && context.DataAttributes.ContainsKey("data-bewaartermijnid"))
+                    Guid BewaartermijnId = Guid.Parse(ttipContext.DataAttributes["bewaartermijnid"]);
+
+                    if (ttipContext.DataAttributes != null && ttipContext.DataAttributes.ContainsKey("bewaartermijnid"))
                     {
-                       // Parse the Guid from the data attribute
-                        BewaartermijnID = Guid.Parse(context.DataAttributes["data-bewaartermijnid"]);
-                        Console.WriteLine($"Tooltip Data Attribute ID: {BewaartermijnID}");
+                        // Parse the Guid from the data attribute
+                        BewaartermijnId = Guid.Parse(ttipContext.DataAttributes["bewaartermijnid"]);
+                        Console.WriteLine($"Tooltip Data Attribute ID: {BewaartermijnId}");
                     }
                     else
                     {
@@ -115,13 +117,11 @@
                     }
 
                     //Fetch data using the Guid
-                    var BewaartermijnDetailsData = GetDataReviewSettings(BewaartermijnID);
+                    var BewaartermijnDetailsData = GetDataReviewSettings(BewaartermijnId);
                     if (BewaartermijnDetailsData != null)
                     {
                         <div>
-                            <p><strong>Bibliotheek</strong>: @BewaartermijnDetailsData.cr971_cr4b0_bibliotheek</p>
-                            <p><strong>InhoudsType</strong>: @BewaartermijnDetailsData.cr971_cr4b0_inhoudstype</p>
-                            <p><strong>Site</strong>: @BewaartermijnDetailsData.cr971_cr4b0_site</p>
+                            <p><strong>Review Settings</strong>: @BewaartermijnDetailsData.cr971_reviewsettingstest</p>
                         </div>
                     }
                     else
@@ -150,6 +150,8 @@
     private string message = "Loading...";
     private string dataRetensionLable;
 
+
+
     //Contains data about an error returned from the Web API
     private Error error;
     public Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessToken _token;
@@ -176,7 +178,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                                                                                                                                                                                                                                        "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
+                                                                                                                                                                                                                                                                            "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -382,6 +384,6 @@
         }
         return bewaartermijn;
     }
-  
+
 }
 
