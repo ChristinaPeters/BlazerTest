@@ -11,6 +11,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @inject AuthServicecs AuthServices
+@inject ReviewSettingsService ReviewSettingsService
 @using System.ComponentModel.DataAnnotations
 
 <AuthorizeView>
@@ -107,7 +108,6 @@
 
                     if (ttipContext.DataAttributes != null && ttipContext.DataAttributes.ContainsKey("bewaartermijnid"))
                     {
-                        // Parse the Guid from the data attribute
                         BewaartermijnId = Guid.Parse(ttipContext.DataAttributes["bewaartermijnid"]);
                         Console.WriteLine($"Tooltip Data Attribute ID: {BewaartermijnId}");
                     }
@@ -120,9 +120,13 @@
                     var BewaartermijnDetailsData = GetDataReviewSettings(BewaartermijnId);
                     if (BewaartermijnDetailsData != null)
                     {
+                        var readableText = ReviewSettingsService.FormatReviewSettings(BewaartermijnDetailsData.cr971_reviewsettingstest.ToString());
                         <div>
+                            
                             <p><strong>Review Settings</strong>: @BewaartermijnDetailsData.cr971_reviewsettingstest</p>
                         </div>
+                        <div>@readableText</div>
+
                     }
                     else
                     {
@@ -178,7 +182,7 @@
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"{client.BaseAddress}cr971_cr4b0_econtentbewaartermijnenses?" +
-                                                                                                                                                                                                                                                                            "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
+                                                                                                                                                                                                                                                                                    "$select=cr971_cr4b0_site,cr971_cr4b0_bibliotheek,cr971_cr4b0_inhoudstype,cr971_cr4b0_bewaartermijn,cr971_contenttypeabbreviatio,cr971_sitenameabbreviation,cr971_librarynameabbreviation,cr971_reviewsettingstest,cr971_labelname")
                 };
             request.Headers.Add("Access-Control-Allow-Origin", "*");
             request.Headers.Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
